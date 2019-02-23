@@ -62,3 +62,30 @@
 		- 允许失败：尝试着进行一次 Minor GC；
 		- 不允许失败：进行一次 Full GC；
 - 不过 JDK 6 Update 24 后，HandlePromotionFailure 参数就没有用了，规则变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行 Minor GC，否则将进行 Full GC。
+
+
+
+## Metaspace 元空间与 PermGem 永久代
+
+Java 8 彻底将永久代 (PermGen) 移除出了 HotSpot JVM，将其原有的数据迁移至 Java Heap 或 Metaspace。
+
+**移除 PermGem 的原因：**
+
+- PermGen 内存经常会溢出，引发恼人的 java.lang.OutOfMemoryError: PermGen，因此 JVM 的开发者希望这一块内存可以更灵活地被管理，不要再经常出现这样的 OOM；
+- 移除 PermGen 可以促进 HotSpot JVM 与 JRockit VM 的融合，因为 JRockit 没有永久代。
+
+**移除 PermGem 后，方法区和字符串常量的位置：**
+
+- 方法区：移至 Metaspace；
+- 字符串常量：移至 Java Heap。
+
+**Metaspace 的位置：**本地堆内存(native heap)。
+
+**Metaspace 的优点：**永久代 OOM 问题将不复存在，因为默认的类的元数据分配只受本地内存大小的限制，也就是说本地内存剩余多少，理论上 Metaspace 就可以有多大；
+
+**JVM参数：**
+
+- `-XX:MetaspaceSize`：分配给类元数据空间（以字节计）的初始大小，为估计值。MetaspaceSize的值设置的过大会延长垃圾回收时间。垃圾回收过后，引起下一次垃圾回收的类元数据空间的大小可能会变大。
+- `-XX:MaxMetaspaceSize`：分配给类元数据空间的最大值，超过此值就会触发Full GC，取决于系统内存的大小。JVM会动态地改变此值。
+- `-XX:MinMetaspaceFreeRatio`：一次GC以后，为了避免增加元数据空间的大小，空闲的类元数据的容量的最小比例，不够就会导致垃圾回收。
+- `-XX:MaxMetaspaceFreeRatio`：一次GC以后，为了避免增加元数据空间的大小，空闲的类元数据的容量的最大比例，不够就会导致垃圾回收。
