@@ -83,29 +83,34 @@
 
 ### 说说 Java 虚拟机程序执行
 
-想要执行 Java 程序，必然要先将 Java 代码编译成字节码文件，也就是 Class 文件，这个编译的过程我们暂且不谈，主要说一下如果执行这个 Class 文件，所以首先我们要先来了解一下 Class 文件的组成结构。
+想要执行 Java 程序，必然要先将 Java 代码编译成字节码文件，也就是 Class 文件，这个编译的过程我们暂且不谈，主要说一下如果执行这个 Class 文件，所以首先我们要先来了解一下 [Class 文件的组成结构](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/00-Class%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84.md#class-%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84)。
 
-在了解了组成结构之后，接下来需要考虑的事情是，我们该怎么把这个 .class 文件加载进内存，让它变成方法区（Java 8 后变为了 Metaspace 元空间）的一个 Class 对象。这一过程就叫做：类的加载。
+在了解了组成结构之后，接下来需要考虑的事情是，我们该怎么把这个 .class 文件加载进内存，让它变成方法区（Java 8 后变为了 Metaspace 元空间）的一个 Class 对象呢？（[类的加载](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6)）。
 
-类的加载说头可就多了，大家都喜欢揪着这问，其实主要就下面这 3 个过程：
+虚拟机的类加载机制说头可就多了，大家都喜欢揪着这问，其实主要就下面这 3 个过程：
 
-- 类加载的时机：在程序第一次主动引用类的时候。
-	- 什么是主动加载？
-	- 什么是被动加载？
-- 类加载的过程：加载 —— 验证 —— 准备 —— 解析 —— 初始化 —— 使用 —— 卸载
-- 类加载器
-	- 如何判断两个类 “相等”？
-	- 类加载器的分类？
-	- 什么双亲委派模型？
-	- 什么是破坏双亲委派模型？
-	- 如何自定义类加载器？
+- [类加载的时机](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%97%B6%E6%9C%BA)：在程序第一次主动引用类的时候。
+  - 什么是主动引用和被动引用？
+  - 什么是显式加载和隐式加载？
+- [类的生命周期](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F)：[加载](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E5%8A%A0%E8%BD%BD) —— [验证](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E9%AA%8C%E8%AF%81) —— [准备](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E5%87%86%E5%A4%87) —— [解析](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E8%A7%A3%E6%9E%90) —— [初始化](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E5%88%9D%E5%A7%8B%E5%8C%96) —— 使用 —— 卸载
+- [类加载器](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8)
+  - [如何判断两个类 “相等”？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%A4%E4%B8%AA%E7%B1%BB-%E7%9B%B8%E7%AD%89)
+  - [类加载器的分类？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%9A%84%E5%88%86%E7%B1%BB)
+  - [什么双亲委派模型？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B)
+  - 破坏双亲委派模型？
+  	- [实现 Java 类的热替换](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/%E9%99%84%E5%BD%950-%E5%AE%9E%E7%8E%B0Java%E7%B1%BB%E7%9A%84%E7%83%AD%E6%9B%BF%E6%8D%A2.md#%E5%AE%9E%E7%8E%B0-java-%E7%B1%BB%E7%9A%84%E7%83%AD%E6%9B%BF%E6%8D%A2)
+  - 如何自定义类加载器？
+  	- 需要保留双亲委派模型：`extends ClassLoader`，重写 `findClass()`
+  	- 破坏双亲委派模型：直接重写 `loadClass()`
 
-将类加载到内存之后，接下来就要考虑如何执行这个类中的方法了。我们知道 5 大内存区域中的虚拟机栈是服务与 Java 方法的内存模型，所以我们首先需要对虚拟机栈的栈帧结构有一定的了解，虚拟机栈的栈帧结构包括如下几个部分：
+将类加载到内存之后，接下来就要考虑如何执行这个类中的方法了。我们知道 5 大内存区域中的 Java 虚拟机栈是服务与 Java 方法的内存模型，那么我们首先应该了解一下 [虚拟机栈的栈帧到底是怎样的结构](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84.md#%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84)，虚拟机栈的栈帧结构包括如下几个部分：
 
-- 局部变量表
-- 操作数栈 & 动态连接 & 方法返回地址
+- [局部变量表](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84.md#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E8%A1%A8)（重要）
+- [操作数栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84.md#%E6%93%8D%E4%BD%9C%E6%95%B0%E6%A0%88) & [动态连接](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84.md#%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5) & [方法返回地址](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_00-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84.md#%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80)
 
-了解了方法执行时的内存模型，接下来就要考虑 Java 是如何根据我们写的代码知道我们到底想要调用哪个方法？即确定被调用的方法是哪一个，然后才是基于栈的解释执行（此时才真正的执行字节码，也就是方法才真正被执行了）。
+了解了辅助方法执行的 Java 虚拟机栈的结构后，接下来就要考虑 Java 类中方法的调用了，
+
+是如何根据我们写的代码知道我们到底想要调用哪个方法？即确定被调用的方法是哪一个，然后才是基于栈的解释执行（此时才真正的执行字节码，也就是方法才真正被执行了）。
 
 - 方法调用字节码指令
 - 方法调用
