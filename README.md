@@ -47,12 +47,12 @@
 虚拟机对内存的管理，其实就是收拾哪些存放我们不会再用的对象的内存，把它们清了拿来放新的对象。所以它首先需要研究下以下几个问题：
 
 - 这堆报废了的对象到底被放哪？
-	- 5 个数据区域：[程序计数器](./Ch1-Java内存管理机制/00-Java内存区域详解.md#程序计数器)、[Java 虚拟机栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88)、[本地方法栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88)、[Java 堆](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#java-%E5%A0%86)、[方法区](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E6%96%B9%E6%B3%95%E5%8C%BA)。
-- 这堆放报废对象的地方会不会内存泄漏？或者换一个洋气点的叫法，会不会 OOM？（每个区的 OOM）
-- 对象是咋被放到这些地方的？（堆中对象的创建）
-- 对象被安置好了之后虚拟机怎么再次找到它？（堆中对象的访问）
+	- 5 个数据区域：[程序计数器](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8)、[Java 虚拟机栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88)、[本地方法栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88)、[Java 堆](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#java-%E5%A0%86)、[方法区](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E6%96%B9%E6%B3%95%E5%8C%BA)。
+- 这堆放报废对象的地方会不会内存泄漏？或者换一个洋气点的叫法，会不会 OOM？（[每个区的 OOM](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/01-OOM%E5%BC%82%E5%B8%B8.md#oom-%E5%BC%82%E5%B8%B8-outofmemoryerror)）
+- 对象是咋被放到这些地方的？（[堆中对象的创建](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E9%81%87%E5%88%B0%E4%B8%80%E6%9D%A1-new-%E6%8C%87%E4%BB%A4%E6%97%B6)）
+- 对象被安置好了之后虚拟机怎么再次找到它？（[堆中对象的访问](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE)）
 
-知道对象都放哪了，就涉及到了 Java 的一大超级特色：垃圾收集（GC）了，垃圾收集，正如其名，主要关心以下几个事情：
+知道对象都放哪了就知道去哪里找报废的对象了，接下来就涉及到了 Java 的一大超级特色：垃圾收集（GC）了，垃圾收集，正如其名，就是把这些报废的对象给清了，腾出来地方放新对象，它主要关心以下几个事情：
 
 - 哪些内存需要回收？
 - 什么时候回收？
