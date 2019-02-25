@@ -79,9 +79,9 @@ Java 8 彻底将永久代 (PermGen) 移除出了 HotSpot JVM，将其原有的�
 - 方法区：移至 Metaspace；
 - 字符串常量：移至 Java Heap。
 
-**Metaspace 的位置：**本地堆内存(native heap)。
+**Metaspace 的位置：** 本地堆内存(native heap)。
 
-**Metaspace 的优点：**永久代 OOM 问题将不复存在，因为默认的类的元数据分配只受本地内存大小的限制，也就是说本地内存剩余多少，理论上 Metaspace 就可以有多大；
+**Metaspace 的优点：** 永久代 OOM 问题将不复存在，因为默认的类的元数据分配只受本地内存大小的限制，也就是说本地内存剩余多少，理论上 Metaspace 就可以有多大；
 
 **JVM参数：**
 

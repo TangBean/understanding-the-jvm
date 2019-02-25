@@ -46,25 +46,37 @@
 
 虚拟机对内存的管理，其实就是收拾哪些存放我们不会再用的对象的内存，把它们清了拿来放新的对象。所以它首先需要研究下以下几个问题：
 
-- 这堆报废了的对象到底被放哪？
+- 这堆报废了的对象到底被放哪？（Java 堆和方法区）
 	- 5 个数据区域：[程序计数器](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8)、[Java 虚拟机栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88)、[本地方法栈](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88)、[Java 堆](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#java-%E5%A0%86)、[方法区](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E6%96%B9%E6%B3%95%E5%8C%BA)。
 - 这堆放报废对象的地方会不会内存泄漏？或者换一个洋气点的叫法，会不会 OOM？（[每个区的 OOM](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/01-OOM%E5%BC%82%E5%B8%B8.md#oom-%E5%BC%82%E5%B8%B8-outofmemoryerror)）
 - 对象是咋被放到这些地方的？（[堆中对象的创建](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E9%81%87%E5%88%B0%E4%B8%80%E6%9D%A1-new-%E6%8C%87%E4%BB%A4%E6%97%B6)）
 - 对象被安置好了之后虚拟机怎么再次找到它？（[堆中对象的访问](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/00-Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E8%AF%A6%E8%A7%A3.md#%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%BF%E9%97%AE)）
 
-知道对象都放哪了就知道去哪里找报废的对象了，接下来就涉及到了 Java 的一大超级特色：垃圾收集（GC）了，垃圾收集，正如其名，就是把这些报废的对象给清了，腾出来地方放新对象，它主要关心以下几个事情：
+知道对象都放哪了，虚拟机就知道去哪里找报废的对象了，接下来就涉及到了 Java 的一大超级特色：垃圾收集（GC）了，垃圾收集，正如其名，就是把这些报废的对象给清了，腾出来地方放新对象，它主要关心以下几个事情：
 
 - 哪些内存需要回收？
-- 什么时候回收？
+	- 放对象的地方需要垃圾回收：Java 堆和方法区。
+- 什么时候回收？（[判断对象的生死](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E5%88%A4%E6%96%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%9F%E6%AD%BB)）
+	- 判断对象报废了没的算法（重点）：[引用计数法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%AE%97%E6%B3%95) 和 [可达性分析法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90%E7%AE%97%E6%B3%95%E4%B8%BB%E6%B5%81)。
 - 如何回收？
-	- GC 算法原理
-	- GC 算法的真正实现：
-		- xxxxxxxxxxxxxxxxxxxx
-		- xxxxxxxxxxxxxxxxxxxx
+  - GC 算法原理（[垃圾收集算法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95)）
+  	- [基础：标记 - 清除算法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E5%9F%BA%E7%A1%80%E6%A0%87%E8%AE%B0---%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95)
+  	- [解决效率问题：复制算法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E8%A7%A3%E5%86%B3%E6%95%88%E7%8E%87%E9%97%AE%E9%A2%98%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95)
+  	- [解决空间碎片问题：标记 - 整理算法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E8%A7%A3%E5%86%B3%E7%A9%BA%E9%97%B4%E7%A2%8E%E7%89%87%E9%97%AE%E9%A2%98%E6%A0%87%E8%AE%B0---%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95)
+  	- [进化：分代收集算法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#%E8%BF%9B%E5%8C%96%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95)
+  - GC 算法的真正实现：
+    - [7 个垃圾收集器](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#7-%E4%B8%AA%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8)
+    - [HotSpot 虚拟机如何高效实现 GC 算法](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/02-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86(GC).md#hotspot-%E4%B8%AD-gc-%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0)
 
-说完了对象是怎么被回收的，就可以说说 Java 中创建一个对象的具体内存分配策略了，也就是我们要创建一个对象的时候到底以怎样的一个流程给这个对象在堆中找个地放，以及每一次 GC 过后，还活着的对象怎么处理的问题。
+说完了对象是怎么被回收的，现在才算是把 Java 的内存管理机制需要用到的小零件给补全了。也就是说，Java 的内存管理流程应该是这样滴：
 
-然后 Java 的内存管理机制也就说的差不多了。接下来，就轮到另一大块：Java 虚拟机程序执行了。
+- 根据新对象是什么对象给对象找个地放
+- 发现内存中没地放这个新对象了就进行 GC 清理出来点地方
+- 真找不着地了就抛 OOM ……
+
+虚拟机一般都用的是进化版的 GC 算法，也就是分代收集算法，也就是说，虚拟机 Java 堆中的内存是分为新生代和老年代的，那么给新对象找地方放的时候放哪呢？具体怎么放呢？放好了之后的对象会不会换个地呆呀？GC 什么时候进行？清理哪呢？……预知 Java 的内存管理机制的详情如何，请看：[Java 内存分配策略](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch1-Java%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6/03-Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5.md#java-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5)。
+
+到此为止，Java 的内存管理机制也就说的差不多了。现在，我们已经知道一个对象是如何在虚拟机的操控下，在内存中走一遭的了。可是首先，对象肯定是根据我们写的类创建的，那么我们写的类到底是如何变为内存中的对象的呢？而且，我们创建对象当然是为了执行它里面的方法呀，那么这个方法是怎么被执行的呢？想要回答这些问题，就需要我们研究一下 Java 虚拟机是如何执行我们的程序的了。
 
 ### 说说 Java 虚拟机程序执行
 
