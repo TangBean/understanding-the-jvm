@@ -133,26 +133,9 @@
 
 常用的 JDK 命令行工具：[JDK 命令行工具](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch3-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E5%8F%8A%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86/00-%E5%B8%B8%E7%94%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7.md#jdk-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7)。
 
-其中的重中之重是 jstat 命令！而它最常用的参数就是 -gcutil，使用格式如下：
+JVM 常见的参数设置已经设置经验可见：[JVM 常见参数设置](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch3-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E5%8F%8A%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86/01-JVM%E5%B8%B8%E8%A7%81%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE.md#jvm-%E5%B8%B8%E8%A7%81%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE)。
 
-```shell
-jstat -gcutil [pid] [intervel] [count]
-```
-
-输出如下：
-
-- `S0`：堆上 Survivor space 0 区已使用空间的百分比
-- `S1`：堆上 Survivor space 1 区已使用空间的百分比
-- `E`：堆上 Eden 区已使用空间的百分比
-- `O`：堆上 Old space 区已使用空间的百分比
-- `P`：堆上 Perm space 区已使用空间的百分比
-- `YGC`：从程序启动到采样时发生的 Minor GC 次数
-- `YGCT`：从程序启动到采样时 Minor GC 所用的时间
-- `FGC`：从程序启动到采样时发生的 Full GC 次数
-- `FGCT`：从程序启动到采样时 Full GC 所用的时间
-- `GCT`：从程序启动到采样时 GC 的总时间
-
-此外，
+虚拟机调优案例分析可见：[虚拟机调优案例分析](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch3-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E5%8F%8A%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90.md#%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90)。
 
 ### 说说 JIT 优化
 
