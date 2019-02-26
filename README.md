@@ -1,4 +1,4 @@
-# 深入理解 Java 虚拟机阅读笔记
+# 《深入理解 Java 虚拟机》阅读笔记
 
 本 repo 为《深入理解 Java 虚拟机 第2版》的阅读笔记，并对全书内容按照自己的理解进行了一定程度的整理。《深入理解 Java 虚拟机 第2版》原书主要分为了五个部分，这里仅对前四个部分进行讲解，第五部分（高效并发）整合进了另一个 repo：[Java 并发编程实战的阅读笔记](https://github.com/TangBean/Java-Concurrency-in-Practice) 中。
 
@@ -155,9 +155,17 @@ JIT，也就是即时编译，首先我们需要知道什么是 JIT？
 - 方法内联【最重要】
 - 逃逸分析【最前沿】
 
-### 说说 Java 的内存模型
+### 说说 Java 的内存模型（JMM）
 
-这部分内容主要与并发编程的内容相关，
+这部分内容主要与并发编程的内容相关，所以详细介绍会跳到另一个 repo：[Java-Concurrency-in-Practice](https://github.com/TangBean/Java-Concurrency-in-Practice)。
+
+Java 的内存模型主要就是研究一个变量的值是怎么在主内存、线程的工作内存和 Java 线程（执行引擎）之间倒腾的。就是说虽然 Java 内存模型规定了所有变量都存储在主内存中，但是每个线程都有一个自己的工作内存，里面存着从主内存拷贝来的变量副本，Java 线程要对变量进行修改，都是先在自己的工作内存中进行，然后再把变化同步回主内存中去。
+
+这样做是由于计算机的存储设备和处理器的运算速度有着几个数量级的差距，所以需要在主内存和 Java 线程间加入一个工作内存作为缓冲，但这也同时会导致主内存和工作内存间的缓存一致性问题，所以当两个工作内存中关于同一个变量的值发生冲突时，需要一定的访问规则来确定主内存以怎样的顺序同步这个变量，也就是说该听哪个工作内存的。而 Java 的内存模型的主要目标就是定义这个规则，即虚拟机如何将变量存储到内存或是从内存中取出的。
+
+简单的来讲，就是掌握 [Java 内存模型中的 8 个原子操作](https://github.com/TangBean/Java-Concurrency-in-Practice/blob/master/Ch0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/00-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md#java-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84-8-%E4%B8%AA%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C)，并且知道 [Java 内存间是如何通过这 8 个操作进行变量传递的](https://github.com/TangBean/Java-Concurrency-in-Practice/blob/master/Ch0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/00-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md#java-%E5%86%85%E5%AD%98%E9%97%B4%E7%9A%84%E6%93%8D%E4%BD%9C)。
+
+其实 Java 的内存模型就是围绕着在并发的过程中如何处理 [原子性](https://github.com/TangBean/Java-Concurrency-in-Practice/blob/master/Ch0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/00-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md#%E5%8E%9F%E5%AD%90%E6%80%A7)、[可见性](https://github.com/TangBean/Java-Concurrency-in-Practice/blob/master/Ch0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/00-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md#%E5%8F%AF%E8%A7%81%E6%80%A7)、[有序性](https://github.com/TangBean/Java-Concurrency-in-Practice/blob/master/Ch0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/00-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md#%E6%9C%89%E5%BA%8F%E6%80%A7) 这 3 个特征建立的。同时 Java 除了可以依靠 volatile 和 synchronized 来保证有序性外，它自己本身还有一个 [Happens-Before 原则](https://github.com/TangBean/Java-Concurrency-in-Practice/blob/master/Ch0-Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/00-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md#happens-before-%E8%A7%84%E5%88%99)，依靠这个原则，我们就可以判断并发环境下的两个操作是否可能存在冲突了。
 
 
 
