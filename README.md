@@ -110,8 +110,8 @@
 
 了解了辅助方法执行的 Java 虚拟机栈的结构后，接下来就要考虑 Java 类中方法的调用了。就像将大象放进冰箱，方法的调用也不是上来就之间执行方法的，而是分为以下两个步骤：
 
-- 方法调用：确定被调用的方法是哪一个
-- 基于栈的解释执行：真正的执行方法的字节码
+- [方法调用](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8.md#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8)：确定被调用的方法是哪一个
+- [基于栈的解释执行](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_02-%E5%9F%BA%E4%BA%8E%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E8%A7%A3%E9%87%8A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E.md#%E5%9F%BA%E4%BA%8E%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E8%A7%A3%E9%87%8A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E)：真正的执行方法的字节码
 
 为什么还要加一个方法调用的步骤呢？因为一切方法调用都是在 Class 文件中以常量池中的符号引用存储的，这就导致了不是我们想要执行哪个方法就能立刻执行的，因为我们首先需要根据这个符号引用（其实就一字符串）找到我们想要执行的方法，而这一过程就叫做方法调用。当找到这个方法之后，我们才会开始执行这个方法，也就是基于栈的解释执行。
 
@@ -124,7 +124,7 @@
   - [静态分派（方法重载）](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8.md#%E9%9D%99%E6%80%81%E5%88%86%E6%B4%BE%E6%96%B9%E6%B3%95%E9%87%8D%E8%BD%BD)
   - [动态分派（方法重写）](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8.md#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E6%96%B9%E6%B3%95%E9%87%8D%E5%86%99)
 
-确定了要调用的方法具体是哪一个了之后，就可开始 [基于栈的解释执行](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_02-%E5%9F%BA%E4%BA%8E%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E8%A7%A3%E9%87%8A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E.md#%E5%9F%BA%E4%BA%8E%E6%A0%88%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E8%A7%A3%E9%87%8A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E) 了，这个时候，方法才真正的被执行。
+确定了要调用的方法具体是哪一个了之后，就可开始基于栈的解释执行了，这个时候，方法才真正的被执行。
 
 此外，还需要了解一下 [Java 的动态类型语言支持](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/02-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E_01-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8.md#%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81)。
 
