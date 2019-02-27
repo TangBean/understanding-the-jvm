@@ -139,26 +139,28 @@ JVM 常见的参数设置已经设置经验可见：[JVM 常见参数设置](htt
 
 ### 说说 JIT 优化
 
-JIT，也就是即时编译，首先我们需要知道什么是 JIT？
+JIT (Just In Time)，也就是即时编译，首先我们需要知道 [什么是 JIT？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91)
 
-之后我们需要了解 HotSpot 虚拟机内的即时编译器运作过程，即回答以下 5 个问题：
+然后，对于 [HotSpot 虚拟机内的即时编译器运作过程](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#hotspot-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%86%85%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91%E5%99%A8%E8%BF%90%E4%BD%9C%E8%BF%87%E7%A8%8B)，我们可以通过以下 5 个问题来研究它：
 
-- 为什么要使用解释器与编译器并存的架构？
-- 为什么虚拟机要实现两个不同的 JIT 编译器？
-- 什么是虚拟机的分层编译？
-- 如何判断热点代码，触发编译？
-	- 什么是热点代码？
-	- 什么是 “多次” 执行？
-	- HotSpot 中每个方法的 2 个计数器
-	- HotSpot 热点代码探测流程
-- 热点代码编译的过程？
+- [为什么要使用解释器与编译器并存的架构？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E8%A7%A3%E9%87%8A%E5%99%A8%E4%B8%8E%E7%BC%96%E8%AF%91%E5%99%A8%E5%B9%B6%E5%AD%98%E7%9A%84%E6%9E%B6%E6%9E%84)
+- [为什么虚拟机要实现两个不同的 JIT 编译器？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%A6%81%E5%AE%9E%E7%8E%B0%E4%B8%A4%E4%B8%AA%E4%B8%8D%E5%90%8C%E7%9A%84-jit-%E7%BC%96%E8%AF%91%E5%99%A8)
+- [什么是虚拟机的分层编译？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E4%BB%80%E4%B9%88%E6%98%AF%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%88%86%E5%B1%82%E7%BC%96%E8%AF%91)
+- [如何判断热点代码，触发编译？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E7%83%AD%E7%82%B9%E4%BB%A3%E7%A0%81%E8%A7%A6%E5%8F%91%E7%BC%96%E8%AF%91)
+  - [什么是热点代码？(两种)](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E4%BB%80%E4%B9%88%E6%98%AF%E7%83%AD%E7%82%B9%E4%BB%A3%E7%A0%81)
+  - [什么是 “多次” 执行？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E4%BB%80%E4%B9%88%E6%98%AF-%E5%A4%9A%E6%AC%A1-%E6%89%A7%E8%A1%8C)
+  - HotSpot 采用的是基于计数器的热点探测方法，并且为了对两种热点代码进行探测，[每个方法有 2 个计数器](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#hotspot-%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%B3%95%E7%9A%84-2-%E4%B8%AA%E8%AE%A1%E6%95%B0%E5%99%A8)：
+  	- 方法调用计数器
+  	- 回边计数器
+  - [HotSpot 热点代码探测流程](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#hotspot-%E7%83%AD%E7%82%B9%E4%BB%A3%E7%A0%81%E6%8E%A2%E6%B5%8B%E6%B5%81%E7%A8%8B)
+- [热点代码编译的过程？](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E7%83%AD%E7%82%B9%E4%BB%A3%E7%A0%81%E7%BC%96%E8%AF%91%E7%9A%84%E8%BF%87%E7%A8%8B)
 
-此外，我们知道 JIT 是要对代码的执行进行优化的，所以我们需要了解一下经典的优化技术：
+此外，JIT 并不是简单的将热点代码编译成机器码就收工的，它还会对代码的执行进行优化，主要有以下几种经典的优化技术：
 
-- 公共子表达式消除【语言无关】
-- 数组范围检查消除【语言相关】
-- 方法内联【最重要】
-- 逃逸分析【最前沿】
+- [公共子表达式消除【语言无关】](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E5%85%AC%E5%85%B1%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B6%88%E9%99%A4%E8%AF%AD%E8%A8%80%E6%97%A0%E5%85%B3)
+- [数组范围检查消除【语言相关】](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E6%95%B0%E7%BB%84%E8%8C%83%E5%9B%B4%E6%A3%80%E6%9F%A5%E6%B6%88%E9%99%A4%E8%AF%AD%E8%A8%80%E7%9B%B8%E5%85%B3)
+- [方法内联【最重要】](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E6%96%B9%E6%B3%95%E5%86%85%E8%81%94%E6%9C%80%E9%87%8D%E8%A6%81)
+- [逃逸分析【最前沿】](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%E6%9C%80%E5%89%8D%E6%B2%BF)
 
 ### 说说 Java 的内存模型（JMM）
 
