@@ -45,7 +45,7 @@
 - [说说 Java 虚拟机程序执行](#说说-java-虚拟机程序执行)
 - [说说虚拟机性能监控及故障处理](#说说虚拟机性能监控及故障处理)
 - [说说 JIT 优化](#说说-jit-优化)
-- [说说 Java 的内存模型（JMM）](#说说-java-的内存模型（JMM）)
+- [说说 Java 的内存模型 (JMM)](#说说-java-的内存模型-(JMM))
 
 ### 说说 Java 的内存管理机制
 
@@ -168,7 +168,7 @@ JIT (Just In Time)，也就是即时编译，首先我们需要知道 [什么是
 - [方法内联【最重要】](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E6%96%B9%E6%B3%95%E5%86%85%E8%81%94%E6%9C%80%E9%87%8D%E8%A6%81)
 - [逃逸分析【最前沿】](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch4-Java%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%BC%98%E5%8C%96/00-Java%E8%BF%90%E8%A1%8C%E6%9C%9F%E4%BC%98%E5%8C%96.md#%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%E6%9C%80%E5%89%8D%E6%B2%BF)
 
-### 说说 Java 的内存模型（JMM）
+### 说说 Java 的内存模型 (JMM)
 
 这部分内容主要与并发编程的内容相关，所以详细介绍会跳到另一个 repo：[Java-Concurrency-in-Practice](https://github.com/TangBean/Java-Concurrency-in-Practice)。
 
