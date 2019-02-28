@@ -90,7 +90,7 @@
 
 ### 说说 Java 虚拟机程序执行
 
-想要执行 Java 程序，必然要先将 Java 代码编译成字节码文件，也就是 Class 文件，这个编译的过程我们暂且不谈，主要说一下如果执行这个 Class 文件，所以首先我们要先来了解一下 [Class 文件的组成结构](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/00-Class%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84.md#class-%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84)。
+想要执行 Java 程序，必然要先将 Java 代码编译成字节码文件，也就是 Class 文件，这个编译的过程我们暂且不谈，主要说一下如何执行这个 Class 文件，所以首先我们要先来了解一下 [Class 文件的组成结构](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/00-Class%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84.md#class-%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84)。
 
 在了解了组成结构之后，接下来需要考虑的事情是，我们该怎么把这个 .class 文件加载进内存，让它变成方法区（Java 8 后变为了 Metaspace 元空间）的一个 Class 对象呢？（[类的加载](https://github.com/TangBean/understanding-the-jvm/blob/master/Ch2-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/01-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.md#%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6)）。
 
